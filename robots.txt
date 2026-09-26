@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://unac-digital.github.io/milo-koffe/sitemap.xml

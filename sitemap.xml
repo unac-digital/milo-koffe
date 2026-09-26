@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/pt/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/en/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/es/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/pt/cardapio/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/cardapio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/menu/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/en/menu/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/cardapio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/menu/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/es/menu/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/cardapio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/menu/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/menu/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/pt/investidores/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/investidores/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/inversores/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/en/investors/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/investidores/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/inversores/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+  </url>
+  <url>
+    <loc>https://unac-digital.github.io/milo-koffe/es/inversores/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://unac-digital.github.io/milo-koffe/pt/investidores/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://unac-digital.github.io/milo-koffe/es/inversores/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unac-digital.github.io/milo-koffe/en/investors/"/>
+  </url>
+</urlset>
