@@ -1,0 +1,62 @@
+---
+interface Props {
+  steps: { title: string; text: string }[];
+}
+const { steps } = Astro.props;
+---
+<ol class="steps">
+  {steps.map((step, i) => (
+    <li>
+      <span class="display n" aria-hidden="true">{i + 1}</span>
+      <div>
+        <h3>{step.title}</h3>
+        <p>{step.text}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    width: 100%;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .n {
+    font-size: 1.375rem;
+    line-height: 1.2;
+    color: var(--green);
+  }
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--ink-quiet);
+  }
+
+  @media (max-width: 900px) {
+    li {
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 10px;
+      padding-block: 18px;
+    }
+  }
+</style>

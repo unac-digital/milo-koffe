@@ -1,0 +1,21 @@
+# dependências e build
+node_modules/
+dist/
+.astro/
+
+# materiais do cliente (brand book, briefing, arquivos-fonte do logo): ficam fora do repositório público
+documentos/
+
+# notas internas de produto e design (estratégia, pendências do cliente): ficam só na máquina da UNAC,
+# porque o repositório é público
+PRODUCT.md
+DESIGN.md
+.impeccable/
+
+# local
+.claude/settings.local.json
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log

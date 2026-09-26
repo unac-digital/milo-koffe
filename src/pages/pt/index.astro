@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import HomeView from '../../views/HomeView.astro';
+import { t } from '../../i18n/ui';
+
+const lang = 'pt';
+const s = t(lang);
+---
+<Base lang={lang} page="home" title={s.meta.homeTitle} description={s.meta.homeDescription}>
+  <HomeView lang={lang} />
+</Base>

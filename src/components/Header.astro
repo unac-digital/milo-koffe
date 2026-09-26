@@ -1,0 +1,225 @@
+---
+import Icon from './Icon.astro';
+import LangSwitcher from './LangSwitcher.astro';
+import { pageUrl, withBase, type Locale, type PageKey } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  page: PageKey;
+  /** 'overlay' fica sobre a foto (creme); 'solid' fica sobre o fundo aveia. */
+  variant?: 'overlay' | 'solid';
+  /** Só logo e idiomas (cardápio aberto pelo QR code). */
+  minimal?: boolean;
+}
+const { lang, page, variant = 'solid', minimal = false } = Astro.props;
+const s = t(lang);
+const logo = withBase(variant === 'overlay' ? 'brand/logo-creme.svg' : 'brand/logo-color.svg');
+const links = [
+  { href: `${pageUrl('home', lang)}#conceito`, label: s.nav.concept, current: false },
+  { href: pageUrl('menu', lang), label: s.nav.menu, current: page === 'menu' },
+  { href: pageUrl('investors', lang), label: s.nav.investors, current: page === 'investors' },
+];
+---
+<header class:list={['site-header', `site-header--${variant}`, { 'site-header--minimal': minimal, 'on-dark': variant === 'overlay' }]}>
+  <div class="bar wrap">
+    <a class="brand" href={pageUrl('home', lang)} aria-label={s.a11y.home}>
+      <img src={logo} alt="" width="148" height="79" />
+    </a>
+
+    {!minimal && (
+      <nav class="nav" aria-label={s.a11y.mainNav}>
+        {links.map((l) => (
+          <a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
+        ))}
+      </nav>
+    )}
+
+    <div class="tools">
+      <LangSwitcher lang={lang} page={page} />
+      {!minimal && (
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" data-open-label={s.a11y.openMenu} data-close-label={s.a11y.closeMenu} aria-label={s.a11y.openMenu}>
+          <span class="i-open"><Icon name="menu" size={24} /></span>
+          <span class="i-close"><Icon name="close" size={24} /></span>
+        </button>
+      )}
+    </div>
+  </div>
+
+  {!minimal && (
+    <nav id="mobile-nav" class="mobile-nav" aria-label={s.a11y.mainNav} hidden>
+      {links.map((l) => (
+        <a class="display" href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
+      ))}
+    </nav>
+  )}
+</header>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.menu-toggle').forEach((btn) => {
+    const header = btn.closest('.site-header');
+    const panel = header?.querySelector<HTMLElement>('.mobile-nav');
+    if (!header || !panel) return;
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', (open ? btn.dataset.closeLabel : btn.dataset.openLabel) ?? '');
+      panel.hidden = !open;
+      header.classList.toggle('is-open', open);
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
+        set(false);
+        btn.focus();
+      }
+    });
+  });
+
+  // Guarda a escolha de idioma para o /menu do QR code e para o aviso de idioma.
+  document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) => {
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('milo-lang', a.dataset.setLang ?? '');
+      } catch {}
+    });
+  });
+</script>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 20;
+  }
+
+  .site-header--overlay {
+    position: absolute;
+    inset: 0 0 auto 0;
+    color: var(--oat);
+  }
+
+  .site-header--solid {
+    color: var(--espresso);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    min-height: var(--header-h);
+    padding-block: 16px;
+  }
+
+  .brand img {
+    width: clamp(92px, 8vw + 60px, 148px);
+    height: auto;
+  }
+
+  .site-header--minimal .brand img {
+    width: 92px;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 44px;
+    margin-left: auto;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .nav a:hover,
+  .nav a[aria-current='page'] {
+    text-decoration: underline;
+  }
+
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav + .tools {
+    padding-left: 28px;
+    border-left: 1px solid currentColor;
+    border-left-color: color-mix(in srgb, currentColor 35%, transparent);
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+  }
+
+  .i-close {
+    display: none;
+  }
+
+  .is-open .i-open {
+    display: none;
+  }
+
+  .is-open .i-close {
+    display: block;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px var(--gutter) 32px;
+    background: var(--green);
+    color: var(--oat);
+  }
+
+  .mobile-nav[hidden] {
+    display: none;
+  }
+
+  .mobile-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    font-size: 2rem;
+    border-bottom: 1px solid rgb(232 225 205 / 0.22);
+  }
+
+  .is-open.site-header--overlay .bar {
+    background: var(--green);
+  }
+
+  @media (max-width: 900px) {
+    .nav {
+      display: none;
+    }
+
+    .nav + .tools {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    .bar {
+      gap: 12px;
+    }
+
+    .tools :global(.langs svg) {
+      display: none;
+    }
+  }
+</style>

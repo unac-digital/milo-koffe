@@ -1,0 +1,23 @@
+{
+  "name": "milo-koffe",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site institucional da Milo Koffe, o primeiro café terapêutico do Brasil (PT/EN/ES)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/onest": "^5.3.1",
+    "@fontsource/gochi-hand": "^5.3.0",
+    "@fontsource/righteous": "^5.3.0",
+    "astro": "^7.3.5",
+    "sharp": "^0.35.4"
+  }
+}

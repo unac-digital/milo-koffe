@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import Bird from '../components/Bird.astro';
+import { locales, htmlLang, pageUrl } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+---
+<Base lang="pt" title={ui.pt.meta.notFoundTitle} description={ui.pt.notFound.body} noindex>
+  <main id="conteudo" class="lost">
+    <Bird width={80} />
+    {locales.map((l) => (
+      <section lang={htmlLang[l]}>
+        <h1 class="display">{ui[l].notFound.title}</h1>
+        <p>{ui[l].notFound.body}</p>
+        <a class="link-arrow" href={pageUrl('home', l)}>{ui[l].notFound.cta}</a>
+      </section>
+    ))}
+  </main>
+</Base>
+
+<style>
+  .lost {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 36px;
+    max-width: 720px;
+    padding: 64px var(--gutter);
+    margin-inline: auto;
+  }
+
+  .lost > :global(svg) {
+    color: var(--green);
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+    line-height: 1.1;
+    color: var(--green);
+  }
+
+  p {
+    color: var(--ink-soft);
+  }
+
+  .link-arrow {
+    align-self: flex-start;
+    color: var(--green);
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,94 @@
+---
+import Icon from './Icon.astro';
+import { locales, htmlLang, localeNames, pageUrl, type Locale, type PageKey } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  page: PageKey;
+  /** 'short' mostra PT · EN · ES; 'full' mostra o nome nativo. */
+  variant?: 'short' | 'full';
+  showIcon?: boolean;
+}
+const { lang, page, variant = 'short', showIcon = true } = Astro.props;
+---
+<div class:list={['langs', `langs--${variant}`]} role="group" aria-label={t(lang).a11y.language}>
+  {showIcon && <Icon name="globe" size={17} />}
+  {locales.map((code) => (
+    <a
+      href={pageUrl(page, code)}
+      hreflang={htmlLang[code]}
+      lang={htmlLang[code]}
+      aria-current={code === lang ? 'true' : undefined}
+      aria-label={variant === 'short' ? `${code.toUpperCase()}, ${localeNames[code]}` : undefined}
+      data-set-lang={code}
+    >{variant === 'short' ? code.toUpperCase() : localeNames[code]}</a>
+  ))}
+</div>
+
+<style>
+  .langs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .langs a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 44px;
+    padding: 0 4px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    opacity: 0.74;
+    transition: opacity 0.4s var(--ease-breath);
+  }
+
+  .langs a:hover {
+    opacity: 1;
+  }
+
+  .langs a[aria-current='true'] {
+    font-weight: 600;
+    opacity: 1;
+  }
+
+  /* O vermelho Coffee Cherry marca só o estado ativo. */
+  .langs a[aria-current='true']::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 18px;
+    height: 2px;
+    margin-left: -9px;
+    border-radius: 2px;
+    background: var(--cherry);
+  }
+
+  .langs--full {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .langs--full a {
+    justify-content: flex-start;
+    min-height: 36px;
+    padding: 0;
+    opacity: 1;
+  }
+
+  .langs--full a[aria-current='true']::after {
+    left: auto;
+    right: -14px;
+    bottom: 50%;
+    width: 6px;
+    height: 6px;
+    margin: 0 0 -3px 0;
+    border-radius: 50%;
+  }
+</style>

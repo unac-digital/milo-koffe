@@ -1,0 +1,106 @@
+---
+import LangSwitcher from './LangSwitcher.astro';
+import { pageUrl, withBase, type Locale, type PageKey } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  page: PageKey;
+}
+const { lang, page } = Astro.props;
+const s = t(lang);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <a class="brand" href={pageUrl('home', lang)} aria-label={s.a11y.home}>
+        <img src={withBase('brand/logo-color.svg')} alt="" width="170" height="90" loading="lazy" />
+      </a>
+      <nav aria-label={s.a11y.footerNav}>
+        <p class="label">{s.footer.navigation}</p>
+        <a href={`${pageUrl('home', lang)}#conceito`}>{s.nav.concept}</a>
+        <a href={pageUrl('menu', lang)}>{s.nav.menu}</a>
+        <a href={pageUrl('investors', lang)}>{s.nav.investors}</a>
+      </nav>
+      <div>
+        <p class="label">{s.footer.contact}</p>
+        <span>{s.footer.emailPending}</span>
+        <span>{s.footer.instagramPending}</span>
+      </div>
+      <div>
+        <p class="label">{s.footer.language}</p>
+        <LangSwitcher lang={lang} page={page} variant="full" showIcon={false} />
+      </div>
+    </div>
+    <div class="legal">
+      <span>© {year} Milo Koffe</span>
+      <span>{s.footer.city}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: 72px 40px;
+    font-size: 1rem;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px 240px 200px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .brand img {
+    width: 170px;
+    height: auto;
+  }
+
+  .cols > nav,
+  .cols > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cols a:not(.brand):hover {
+    text-decoration: underline;
+  }
+
+  .label {
+    margin-bottom: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+
+  .legal {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--ink-quiet);
+  }
+
+  @media (max-width: 900px) {
+    .cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px 20px;
+    }
+
+    .brand {
+      grid-column: 1 / -1;
+    }
+
+    .brand img {
+      width: 140px;
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import LangSuggest from '../components/LangSuggest.astro';
+import {
+  absolute,
+  fallbackLocale,
+  htmlLang,
+  locales,
+  ogLocale,
+  pageUrl,
+  withBase,
+  type Locale,
+  type PageKey,
+} from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  /** Página com versões nos três idiomas (gera hreflang). */
+  page?: PageKey;
+  title: string;
+  description: string;
+  /** Força o canonical (ex.: a raiz "/" aponta para /pt/). */
+  canonical?: string;
+  noindex?: boolean;
+  suggestLanguage?: boolean;
+}
+
+const { lang, page, title, description, canonical, noindex = false, suggestLanguage = true } = Astro.props;
+const s = t(lang);
+const selfUrl = canonical ?? (page ? absolute(pageUrl(page, lang)) : absolute(Astro.url.pathname));
+const ogImage = absolute(withBase('og.jpg'));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CafeOrCoffeeShop',
+  name: 'Milo Koffe',
+  description: t(lang).meta.homeDescription,
+  url: absolute(pageUrl('home', lang)),
+  logo: absolute(withBase('brand/logo-color.svg')),
+  image: ogImage,
+  areaServed: 'Florianópolis, SC, Brasil',
+  servesCuisine: ['Specialty coffee', 'Healthy food'],
+  availableLanguage: ['pt-BR', 'en', 'es'],
+};
+---
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={selfUrl} />}
+    {page && !noindex && locales.map((l) => (
+      <link rel="alternate" hreflang={htmlLang[l]} href={absolute(pageUrl(page, l))} />
+    ))}
+    {page && !noindex && <link rel="alternate" hreflang="x-default" href={absolute(pageUrl(page, fallbackLocale))} />}
+
+    <meta name="theme-color" content="#02732D" />
+    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={s.meta.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={selfUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {locales.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">{s.a11y.skip}</a>
+    <slot />
+    {page && suggestLanguage && <LangSuggest lang={lang} page={page} />}
+  </body>
+</html>

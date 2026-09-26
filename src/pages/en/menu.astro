@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuView from '../../views/MenuView.astro';
+import { t } from '../../i18n/ui';
+
+const lang = 'en';
+const s = t(lang);
+---
+<Base lang={lang} page="menu" title={s.meta.menuTitle} description={s.meta.menuDescription} suggestLanguage={false}>
+  <MenuView lang={lang} />
+</Base>

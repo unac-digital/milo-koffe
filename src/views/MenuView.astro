@@ -1,0 +1,377 @@
+---
+import Header from '../components/Header.astro';
+import Icon from '../components/Icon.astro';
+import Bird from '../components/Bird.astro';
+import { menu, houseBlend, formatPrice } from '../data/menu';
+import { pageUrl, type Locale } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const shortCats = {
+  pt: { coffee: 'Cafés', snacks: 'Snacks', smoothies: 'Smoothies', meals: 'Refeições' },
+  en: { coffee: 'Coffee', snacks: 'Snacks', smoothies: 'Smoothies', meals: 'Meals' },
+  es: { coffee: 'Cafés', snacks: 'Snacks', smoothies: 'Smoothies', meals: 'Comidas' },
+}[lang];
+const price = (v: number | null) => (v === null ? s.menu.pricePending : formatPrice(v, lang));
+const ready = menu.filter((c) => c.items.length > 0);
+const pendingNames = menu.filter((c) => c.items.length === 0).map((c) => s.categories[c.id].toLowerCase());
+const pendingList = new Intl.ListFormat(lang, { style: 'long', type: 'conjunction' }).format(pendingNames);
+---
+<Header lang={lang} page="menu" minimal />
+
+<main id="conteudo" class="menu">
+  <div class="menu-head wrap">
+    <div class="title-row">
+      <h1 class="display">{s.menu.title}</h1>
+      <p class="hand note" aria-hidden="true">{s.menu.note}</p>
+    </div>
+    <p class="provisional"><Icon name="info" size={15} /> {s.menu.provisional}</p>
+  </div>
+
+  {ready.length > 1 && (
+    <nav class="tabs" aria-label={s.a11y.categories}>
+      <div class="tabs-inner wrap">
+        {ready.map((cat, i) => (
+          <a href={`#${cat.id}`} data-tab={cat.id} aria-current={i === 0 ? 'true' : undefined}>{shortCats[cat.id]}</a>
+        ))}
+      </div>
+    </nav>
+  )}
+
+  <div class="wrap sections">
+    {ready.map((cat) => (
+      <section id={cat.id} class="cat" aria-labelledby={`h-${cat.id}`} data-section={cat.id}>
+        <h2 id={`h-${cat.id}`} class="display cat-title">{s.categories[cat.id]}</h2>
+        <ul class="items">
+          {cat.items.map((item) => (
+            <li>
+              <div class="item-row">
+                <h3 class="item-name">{item.name}</h3>
+                <span class="num price">{price(item.price)}</span>
+              </div>
+              {item.description && <p class="item-desc">{item.description[lang]}</p>}
+            </li>
+          ))}
+        </ul>
+        {cat.id === 'coffee' && (
+          <div class="blend on-dark">
+            <div class="item-row">
+              <h3 class="display blend-name">{houseBlend.name}</h3>
+              <span class="num price">{price(houseBlend.price)}</span>
+            </div>
+            <p class="blend-desc">{houseBlend.description[lang]}</p>
+            <div class="blend-foot">
+              <p class="blend-meta">{houseBlend.weight} · {s.menu.beans}</p>
+              <p class="hand blend-note">{s.menu.takeHome}</p>
+            </div>
+          </div>
+        )}
+      </section>
+    ))}
+
+    {pendingNames.length > 0 && (
+      <aside class="soon">
+        <Bird width={44} />
+        <div>
+          <p class="hand">{s.menu.soon}</p>
+          <p class="soon-list">{pendingList}</p>
+          <p class="soon-text">{s.menu.pending}</p>
+        </div>
+      </aside>
+    )}
+
+    <a class="link-arrow about" href={pageUrl('home', lang)}><span>{s.menu.about}</span> <Icon name="arrow" /></a>
+  </div>
+</main>
+
+<div class="order-bar on-dark">
+  <div class="wrap order-inner">
+    <Bird width={34} />
+    <p>{s.menu.order}</p>
+  </div>
+</div>
+
+<script>
+  // Destaca a categoria visível (sem esconder as outras: todo o cardápio fica no HTML).
+  const tabs = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('[data-tab]').forEach((a) => tabs.set(a.dataset.tab ?? '', a));
+  const setActive = (id: string) => {
+    tabs.forEach((a, key) => {
+      if (key === id) {
+        a.setAttribute('aria-current', 'true');
+        a.parentElement?.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' });
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    });
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive((e.target as HTMLElement).dataset.section ?? '');
+        });
+      },
+      { rootMargin: '-35% 0px -60% 0px' },
+    );
+    document.querySelectorAll<HTMLElement>('[data-section]').forEach((el) => io.observe(el));
+  }
+</script>
+
+<style>
+  .menu {
+    padding-bottom: 140px;
+  }
+
+  .menu-head {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 32px;
+    padding-bottom: 8px;
+    max-width: 760px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: clamp(2.875rem, 2.4rem + 2vw, 4rem);
+    line-height: 1;
+    color: var(--green);
+  }
+
+  .note {
+    margin-bottom: 6px;
+    font-size: 1.5rem;
+    transform: rotate(-4deg);
+  }
+
+  .provisional {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--ink-quiet);
+  }
+
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--oat);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tabs-inner {
+    display: flex;
+    gap: 8px;
+    padding-block: 14px;
+    max-width: 760px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs a {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid rgb(92 46 0 / 0.3);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition:
+      background-color 0.5s var(--ease-breath),
+      color 0.5s var(--ease-breath),
+      border-color 0.5s var(--ease-breath);
+  }
+
+  .tabs a[aria-current='true'] {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--oat);
+    font-weight: 600;
+  }
+
+  .sections {
+    max-width: 760px;
+  }
+
+  .cat {
+    padding-top: 36px;
+    scroll-margin-top: 80px;
+  }
+
+  .cat-title {
+    margin-bottom: 8px;
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .items li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-block: 18px;
+    border-top: 1px solid rgb(92 46 0 / 0.16);
+  }
+
+  .item-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .item-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .price {
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .item-desc {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--ink-quiet);
+  }
+
+  .blend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 26px 22px;
+    border-radius: 20px;
+    background: var(--green);
+    color: var(--oat);
+  }
+
+  .blend-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 4px;
+  }
+
+  .blend-note {
+    font-size: 1.375rem;
+    transform: rotate(-3deg);
+  }
+
+  .blend-name {
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .blend-desc {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--on-dark-soft);
+  }
+
+  .blend-meta {
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    color: var(--on-dark-soft);
+  }
+
+  .soon {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--green);
+  }
+
+  .soon :global(svg) {
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .soon .hand {
+    font-size: 1.625rem;
+  }
+
+  .soon-text {
+    max-width: 30em;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-quiet);
+  }
+
+  .soon-list {
+    margin-top: 6px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .soon-list::first-letter {
+    text-transform: uppercase;
+  }
+
+  .about {
+    margin-top: 40px;
+    color: var(--green);
+  }
+
+  .order-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 15;
+    background: var(--espresso);
+    color: var(--oat);
+  }
+
+  .order-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 760px;
+    padding-block: 16px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .order-inner :global(svg) {
+    flex-shrink: 0;
+  }
+
+  .order-inner p {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  @media (min-width: 901px) {
+    .menu-head,
+    .tabs-inner,
+    .sections,
+    .order-inner {
+      margin-inline: auto;
+    }
+  }
+</style>

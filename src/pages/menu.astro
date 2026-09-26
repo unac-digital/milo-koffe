@@ -1,0 +1,76 @@
+---
+/*
+ * Destino do QR code das mesas: /menu
+ * Abre o cardápio no idioma escolhido antes ou, na falta dele, no idioma do celular.
+ * Não é indexado; sem JavaScript, mostra os três links.
+ */
+import Base from '../layouts/Base.astro';
+import Bird from '../components/Bird.astro';
+import { htmlLang, localeNames, locales, pageUrl, fallbackLocale } from '../i18n/routes';
+
+const targets = Object.fromEntries(locales.map((l) => [l, pageUrl('menu', l)]));
+---
+<Base lang="en" title="Milo Koffe — Menu · Cardápio · Menú" description="Milo Koffe menu" noindex>
+  <main id="conteudo" class="gate" data-targets={JSON.stringify(targets)} data-fallback={fallbackLocale}>
+    <Bird width={72} />
+    <p class="display">Menu · Cardápio · Menú</p>
+    <ul>
+      {locales.map((l) => (
+        <li><a class="btn btn--green" href={targets[l]} hreflang={htmlLang[l]} lang={htmlLang[l]} data-set-lang={l}>{localeNames[l]}</a></li>
+      ))}
+    </ul>
+  </main>
+</Base>
+
+<script>
+  const gate = document.querySelector<HTMLElement>('.gate');
+  if (gate) {
+    const targets: Record<string, string> = JSON.parse(gate.dataset.targets ?? '{}');
+    let chosen: string | null = null;
+    try {
+      chosen = localStorage.getItem('milo-lang');
+    } catch {}
+    const fromPhone = (navigator.languages ?? [navigator.language])
+      .map((l) => l.slice(0, 2).toLowerCase())
+      .find((l) => l in targets);
+    const lang = (chosen && chosen in targets ? chosen : fromPhone) ?? gate.dataset.fallback ?? 'en';
+    location.replace(targets[lang]);
+
+    gate.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) =>
+      a.addEventListener('click', () => {
+        try {
+          localStorage.setItem('milo-lang', a.dataset.setLang ?? '');
+        } catch {}
+      }),
+    );
+  }
+</script>
+
+<style>
+  .gate {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px var(--gutter);
+    color: var(--green);
+    text-align: center;
+  }
+
+  .gate p {
+    font-size: 1.75rem;
+  }
+
+  .gate ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(100%, 320px);
+  }
+
+  .gate .btn {
+    width: 100%;
+  }
+</style>

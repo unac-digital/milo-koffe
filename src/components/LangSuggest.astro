@@ -1,0 +1,116 @@
+---
+/*
+ * Sugere, sem redirecionar, a versão no idioma do navegador (recomendação do Google).
+ * Só aparece quando o idioma do navegador é outro e o visitante ainda não escolheu nenhum.
+ */
+import Icon from './Icon.astro';
+import { locales, pageUrl, type Locale, type PageKey } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+
+interface Props {
+  lang: Locale;
+  page: PageKey;
+}
+const { lang, page } = Astro.props;
+const offers = locales
+  .filter((l) => l !== lang)
+  .map((l) => ({ code: l, href: pageUrl(page, l), ...ui[l].suggest }));
+---
+<div class="suggest" data-current={lang} hidden>
+  {offers.map((o) => (
+    <template data-offer={o.code}>
+      <p lang={o.code}>{o.text}</p>
+      <a class="go" href={o.href} data-set-lang={o.code} lang={o.code}>{o.action} <Icon name="arrow" size={18} /></a>
+      <button class="x" type="button" aria-label={o.dismiss}><Icon name="close" size={18} /></button>
+    </template>
+  ))}
+</div>
+
+<script>
+  const box = document.querySelector<HTMLElement>('.suggest');
+  if (box) {
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem('milo-lang') || sessionStorage.getItem('milo-suggest-dismissed');
+    } catch {}
+    const wanted = (navigator.languages?.[0] ?? navigator.language ?? '').slice(0, 2).toLowerCase();
+    const tpl = box.querySelector<HTMLTemplateElement>(`template[data-offer="${wanted}"]`);
+    if (!stored && tpl && wanted !== box.dataset.current) {
+      box.append(tpl.content.cloneNode(true));
+      box.hidden = false;
+      box.querySelector('.x')?.addEventListener('click', () => {
+        box.hidden = true;
+        try {
+          sessionStorage.setItem('milo-suggest-dismissed', '1');
+        } catch {}
+      });
+      box.querySelector<HTMLAnchorElement>('.go')?.addEventListener('click', (e) => {
+        try {
+          localStorage.setItem('milo-lang', (e.currentTarget as HTMLAnchorElement).dataset.setLang ?? '');
+        } catch {}
+      });
+    }
+  }
+</script>
+
+<style>
+  .suggest {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px 16px;
+    flex-wrap: wrap;
+    max-width: 560px;
+    padding: 12px 8px 12px 20px;
+    border-radius: 20px;
+    background: var(--espresso);
+    color: var(--oat);
+    animation: rise 0.9s var(--ease-breath) both;
+  }
+
+  .suggest[hidden] {
+    display: none;
+  }
+
+  .suggest :global(p) {
+    flex: 1 1 220px;
+    font-size: 0.9375rem;
+  }
+
+  .suggest :global(.go) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .suggest :global(.go:hover) {
+    text-decoration: underline;
+  }
+
+  .suggest :global(.x) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+  }
+
+  .suggest :global(:focus-visible) {
+    outline-color: var(--oat);
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+</style>

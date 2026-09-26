@@ -1,0 +1,595 @@
+---
+import { Picture } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import Bird from '../components/Bird.astro';
+import ModelSteps from '../components/ModelSteps.astro';
+import BrandGallery from '../components/BrandGallery.astro';
+import { pageUrl, type Locale } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import terraco from '../assets/photos/terraco.jpg';
+import aventalCopo from '../assets/photos/avental-copo.jpg';
+import graos from '../assets/photos/graos.jpg';
+import ciclista from '../assets/photos/ciclista.jpg';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const cats = [s.categories.coffee, s.categories.snacks, s.categories.smoothies, s.categories.meals];
+---
+<Header lang={lang} page="home" variant="overlay" />
+
+<main id="conteudo">
+  <section class="hero on-dark">
+    <Picture
+      src={terraco}
+      alt={s.hero.alt}
+      formats={['avif', 'webp']}
+      widths={[640, 960, 1280, 1672]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="hero-img"
+    />
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="hero-copy wrap">
+      <h1 class="display">{s.hero.title}</h1>
+      <p class="hero-sub">{s.hero.sub}</p>
+      <div class="hero-actions">
+        <a class="btn btn--oat" href={pageUrl('investors', lang)}>{s.hero.cta}</a>
+        <a class="link-arrow" href={pageUrl('menu', lang)}><span>{s.hero.menu}</span> <Icon name="arrow" /></a>
+      </div>
+      <p class="hero-note hand hero-note--mobile" aria-hidden="true">{s.hero.note}</p>
+    </div>
+    <p class="hero-note hand hero-note--desktop" aria-hidden="true">{s.hero.note}</p>
+  </section>
+
+  <section id="conceito" class="manifesto on-dark" aria-label={s.nav.concept}>
+    <div class="wrap manifesto-grid">
+      <Bird width={86} class="manifesto-bird" />
+      <p class="display manifesto-text" data-breath>
+        {s.manifesto.map((part) => <span class="breath-line">{part} </span>)}
+      </p>
+    </div>
+  </section>
+
+  <section class="model">
+    <div class="wrap split">
+      <Picture
+        src={aventalCopo}
+        alt={s.model.alt}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 1000, 1400]}
+        sizes="(max-width: 900px) 100vw, 50vw"
+        class="photo model-img"
+      />
+      <div class="stack">
+        <h2 class="display h2">{s.model.title}</h2>
+        <p class="lead">{s.model.body}</p>
+        <ModelSteps steps={s.model.steps} />
+        <a class="link-arrow green" href={pageUrl('investors', lang)}><span>{s.model.link}</span> <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="serve">
+    <div class="wrap serve-grid">
+      <Picture
+        src={graos}
+        alt={s.serve.alt}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 1000]}
+        sizes="(max-width: 900px) 100vw, 500px"
+        class="photo serve-img"
+      />
+      <div class="stack stack--wide">
+        <h2 class="display h2">{s.serve.title}</h2>
+        <ul class="cats">
+          {cats.map((c, i) => (
+            <li>
+              <span class="display cat-name">{c}</span>
+              {i === 0 && <span class="cat-detail">{s.serve.coffeeList}</span>}
+            </li>
+          ))}
+        </ul>
+        <div class="serve-actions">
+          <a class="btn btn--green" href={pageUrl('menu', lang)}>{s.serve.cta}</a>
+          <span class="langs-note"><Icon name="globe" size={17} /> {s.serve.languages}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="brand">
+    <div class="wrap">
+      <div class="brand-head">
+        <h2 class="display h2">{s.brand.title}</h2>
+        <p class="lead">{s.brand.body}</p>
+      </div>
+      <BrandGallery lang={lang} />
+    </div>
+  </section>
+
+  <section class="floripa on-dark">
+    <div class="floripa-text">
+      <h2 class="display h2">{s.floripa.title}</h2>
+      <p class="lead">{s.floripa.body}</p>
+      <p class="hand floripa-note">{s.floripa.note}</p>
+    </div>
+    <Picture
+      src={ciclista}
+      alt={s.floripa.alt}
+      formats={['avif', 'webp']}
+      widths={[480, 720, 1122]}
+      sizes="(max-width: 900px) 100vw, 50vw"
+      class="floripa-img"
+    />
+  </section>
+
+  <section class="close on-dark">
+    <div class="wrap"><div class="stack">
+      <Bird width={64} />
+      <h2 class="display close-title">{s.close.title}</h2>
+      <p class="lead">{s.close.body}</p>
+      <div class="hero-actions">
+        <a class="btn btn--oat" href={pageUrl('investors', lang)}>{s.close.cta}</a>
+        <a class="link-arrow" href={`${pageUrl('investors', lang)}#contato`}><span>{s.close.talk}</span> <Icon name="arrow" /></a>
+      </div>
+    </div></div>
+  </section>
+</main>
+
+<Footer lang={lang} page="home" />
+
+<script>
+  // Assinatura: o manifesto "respira". Cada frase acende quando chega ao meio da tela.
+  const text = document.querySelector<HTMLElement>('[data-breath]');
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (text && !calm && 'IntersectionObserver' in window) {
+    const lines = Array.from(text.querySelectorAll<HTMLElement>('.breath-line'));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-lit');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -42% 0px' },
+    );
+    text.classList.add('is-breathing');
+    lines.forEach((line) => io.observe(line));
+  }
+</script>
+
+<style>
+  .h2 {
+    font-size: var(--step-1);
+    line-height: 1.04;
+    color: var(--green);
+  }
+
+  .lead {
+    font-size: var(--body-l);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 34em;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+    max-width: 540px;
+  }
+
+  .stack--wide {
+    max-width: none;
+    align-items: stretch;
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  /* Abertura */
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 640px;
+    height: min(100svh, 920px);
+    overflow: hidden;
+    background: var(--roast);
+    color: var(--oat);
+  }
+
+  .hero :global(.hero-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0% 40%;
+  }
+
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(38 19 0 / 0.42) 0%, rgb(38 19 0 / 0) 14%),
+      linear-gradient(90deg, rgb(38 19 0 / 0.66) 0%, rgb(38 19 0 / 0.34) 42%, rgb(38 19 0 / 0) 66%),
+      linear-gradient(0deg, rgb(38 19 0 / 0.55) 0%, rgb(38 19 0 / 0) 48%);
+  }
+
+  .hero-copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-bottom: clamp(44px, 6.7vw, 96px);
+  }
+
+  .hero h1 {
+    max-width: 11.5em;
+    font-size: var(--step-hero);
+    line-height: 1;
+  }
+
+  .hero-sub {
+    max-width: 26em;
+    font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.3125rem);
+    line-height: 1.5;
+    color: var(--on-dark-soft);
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    margin-top: 12px;
+  }
+
+  .hero-note {
+    font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem);
+    color: var(--oat);
+    transform: rotate(-4deg);
+    transform-origin: left center;
+  }
+
+  .hero-note--desktop {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 100px;
+  }
+
+  .hero-note--mobile {
+    display: none;
+  }
+
+  /* Manifesto */
+  .manifesto {
+    background: var(--green);
+    color: var(--oat);
+    padding-block: clamp(96px, 12vw, 180px);
+  }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .manifesto :global(.manifesto-bird) {
+    margin-top: 0.4em;
+  }
+
+  .manifesto-text {
+    max-width: 20em;
+    font-size: var(--step-2);
+    line-height: 1.2;
+    text-wrap: pretty;
+  }
+
+  .breath-line {
+    transition: color var(--breath) var(--ease-breath);
+  }
+
+  .is-breathing .breath-line {
+    color: var(--on-dark-dim);
+  }
+
+  .is-breathing .breath-line.is-lit {
+    color: var(--oat);
+  }
+
+  /* Modelo */
+  .model {
+    padding-block: var(--section-y);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 6.7vw, 96px);
+    align-items: center;
+  }
+
+  .model :global(.model-img) {
+    height: clamp(260px, 43vw, 620px);
+    object-position: 30% center;
+  }
+
+  /* O que servimos */
+  .serve {
+    padding-block: 0 var(--section-y);
+  }
+
+  .serve-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 500px) minmax(0, 1fr);
+    gap: clamp(40px, 7.8vw, 112px);
+    align-items: center;
+  }
+
+  .serve :global(.serve-img) {
+    height: clamp(300px, 46vw, 670px);
+  }
+
+  .cats li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  .cats li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cat-name {
+    font-size: var(--step-3);
+    line-height: 1.1;
+  }
+
+  .cat-detail {
+    font-size: 0.9375rem;
+    color: var(--ink-quiet);
+    text-align: right;
+    max-width: 22em;
+  }
+
+  .serve-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px 28px;
+  }
+
+  .langs-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: var(--ink-quiet);
+  }
+
+  /* Marca */
+  .brand {
+    padding-block: 0 var(--section-y);
+  }
+
+  .brand-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+    gap: 32px 96px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+
+  .brand-head .h2 {
+    max-width: 12em;
+  }
+
+  /* Florianópolis */
+  .floripa {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 760px;
+    background: var(--green);
+    color: var(--oat);
+  }
+
+  .floripa-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+    padding: 96px 96px 96px var(--gutter);
+  }
+
+  .floripa .h2 {
+    color: var(--oat);
+  }
+
+  .floripa .lead {
+    color: var(--on-dark-soft);
+  }
+
+  .floripa-note {
+    font-size: clamp(1.5rem, 1.3rem + 0.5vw, 1.75rem);
+    transform: rotate(-3deg);
+    transform-origin: left center;
+  }
+
+  .floripa :global(.floripa-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  /* Fechamento */
+  .close {
+    padding-block: clamp(88px, 9vw, 130px);
+    background: var(--espresso);
+    color: var(--oat);
+  }
+
+  .close .stack {
+    max-width: 1000px;
+    gap: 30px;
+  }
+
+  .close-title {
+    font-size: clamp(2.625rem, 1.6rem + 3.6vw, 4.75rem);
+    line-height: 1;
+  }
+
+  .close .lead {
+    color: var(--on-dark-soft);
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      height: min(100svh, 820px);
+    }
+
+    .hero :global(.hero-img) {
+      object-position: 66% center;
+    }
+
+    .hero-shade {
+      background:
+        linear-gradient(180deg, rgb(38 19 0 / 0.45) 0%, rgb(38 19 0 / 0) 14%),
+        linear-gradient(0deg, rgb(38 19 0 / 0.82) 0%, rgb(38 19 0 / 0.45) 40%, rgb(38 19 0 / 0) 64%);
+    }
+
+    .hero-copy {
+      gap: 18px;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+
+    .hero-actions .link-arrow {
+      justify-content: center;
+    }
+
+    .hero-note--desktop {
+      display: none;
+    }
+
+    .hero-note--mobile {
+      display: block;
+      align-self: center;
+      font-size: 1.375rem;
+      transform-origin: center;
+    }
+
+    .manifesto-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 36px;
+    }
+
+    .manifesto :global(.manifesto-bird) {
+      width: 64px;
+      height: auto;
+    }
+
+    .split,
+    .serve-grid,
+    .brand-head,
+    .floripa {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .model .split > :global(picture),
+    .model .split > :global(img) {
+      order: 1;
+    }
+
+    .model .stack {
+      display: contents;
+    }
+
+    .model .split {
+      gap: 26px;
+    }
+
+    .model .h2 {
+      order: 0;
+    }
+
+    .model .lead,
+    .model :global(.steps),
+    .model .link-arrow {
+      order: 2;
+    }
+
+    .serve-grid {
+      gap: 26px;
+    }
+
+    .serve .stack {
+      display: contents;
+    }
+
+    .serve .h2 {
+      order: -1;
+    }
+
+    .cats li {
+      flex-direction: column;
+      padding-block: 18px;
+    }
+
+    .cat-detail {
+      text-align: left;
+    }
+
+    .serve-actions {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+
+    .langs-note {
+      justify-content: center;
+    }
+
+    .brand-head {
+      margin-bottom: 32px;
+      gap: 22px;
+    }
+
+    .floripa {
+      min-height: 0;
+    }
+
+    .floripa :global(.floripa-img) {
+      order: -1;
+      height: 440px;
+    }
+
+    .floripa-text {
+      padding: 56px var(--gutter) 64px;
+      gap: 22px;
+    }
+
+    .close .hero-actions {
+      align-self: stretch;
+    }
+  }
+</style>
