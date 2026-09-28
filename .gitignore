@@ -14,8 +14,6 @@ DESIGN.md
 
 # local
 .claude/settings.local.json
-.claude/skills/
-.agents/
 .env
 .env.*
 .DS_Store
